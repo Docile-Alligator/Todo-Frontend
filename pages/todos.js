@@ -22,9 +22,14 @@ const Todos = () => {
     const [allPageSize, setAllPageSize] = useState(25);
 
     const fetchIncompleteTodos = async () => {
+        if (activeTab !== "incomplete" || incompleteTodos.length !== 0) {
+            return;
+        }
+
         const params = new URLSearchParams({
             page: incompletePage,
-            pageSize: incompletePageSize
+            pageSize: incompletePageSize,
+            findIncomplete: true
         });
 
         try {
@@ -44,6 +49,10 @@ const Todos = () => {
     };
 
     const fetchAllTodos = async () => {
+        if (activeTab !== "all" || allTodos.length !== 0) {
+            return;
+        }
+
         const params = new URLSearchParams({
             page: allPage,
             pageSize: allPageSize
@@ -67,10 +76,11 @@ const Todos = () => {
 
     useEffect(() => {
         fetchIncompleteTodos();
-        fetchAllTodos();
-    }, []);
+    }, [activeTab, incompleteTodos]);
 
-    console.log(incompleteTodos);
+    useEffect(() => {
+        fetchAllTodos();
+    }, [activeTab, allTodos]);
 
     return (
         <PageLayout title="Create todo">
