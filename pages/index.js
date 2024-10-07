@@ -16,7 +16,7 @@ const Index = () => {
                         <Link className="noLinkStyling" href="/create">
                             <Button text="Create new todo" size="large" variant="primary" isFullWidth />
                         </Link>
-                        <Link className="noLinkStyling" href="/pages/todoss">
+                        <Link className="noLinkStyling" href="/todos">
                             <Button text="My todos" size="large" variant="primary" isFullWidth />
                         </Link>
                     </div>

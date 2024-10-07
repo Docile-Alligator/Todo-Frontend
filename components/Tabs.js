@@ -61,6 +61,7 @@ const Container = styled.div`
         flex-direction: column;
         flex-grow: 1;
         height: 100%;
+        width: 100%;
     }
 `;
 
