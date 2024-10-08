@@ -19,6 +19,13 @@ export default (state = defaultState, action) => {
                     name: action.name
                 }
             };
+        case 'TODO/CLEAR-UPDATE-NAME-ALERTS':
+            return {
+                ...state,
+                alerts: {
+                    ...defaultState.alerts
+                }
+            };
         case 'TODO/ERROR':
             return {
                 ...state,

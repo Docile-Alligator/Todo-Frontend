@@ -4,6 +4,17 @@ export const updateTodoName = ({name = ""}) => ({
     name
 });
 
+// TODO/UPDATE-NAME-ERROR
+export const updateTodoNameError = ({error = ""}) => ({
+    type: 'TODO/ERROR',
+    error
+});
+
+// TODO/CLEAR-UPDATE-NAME-ALERTS
+export const clearUpdateTodoNameALerts = () => ({
+    type: 'TODO/CLEAR-ALERTS'
+});
+
 // TODO/CLEAR
 export const clearTodo = () => ({
     type: 'TODO/CLEAR'

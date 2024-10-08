@@ -8,7 +8,9 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {show} from "react-modal/lib/helpers/ariaAppHider";
-import {updateTodoName} from "../actions/todo";
+import {clearTodoAlerts, clearUpdateTodoNameALerts, updateTodoName, updateTodoNameError} from "../actions/todo";
+import Alert from "../components/Alert";
+import {useDispatch, useSelector} from "react-redux";
 
 
 const Todos = () => {
@@ -28,7 +30,12 @@ const Todos = () => {
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
 
+    const [alertMessage, setAlertMessage] = useState("");
+
     const dialogRef = useRef(null);
+
+    const dispatch = useDispatch();
+    const todoState = useSelector((state) => state.todo);
 
     const fetchIncompleteTodos = async () => {
 
@@ -112,6 +119,8 @@ const Todos = () => {
     }
 
     const onConfirmEditTodo = async () => {
+        dispatch(clearUpdateTodoNameALerts());
+        
         const result = apiFetch("/todo/editName", {
             method: "POST",
             body: {
@@ -122,14 +131,14 @@ const Todos = () => {
 
         result.then((result) => {
             if (result.status !== 200) {
-
+                dispatch(updateTodoNameError({ error: "Changing todo name failed" }));
             } else {
                 if (dialogRef.current) {
                     dialogRef.current.close();
                 }
             }
         }).catch((error) => {
-            console.error(error);
+            dispatch(updateTodoNameError({ error: error }));
         });
     }
 
@@ -170,20 +179,26 @@ const Todos = () => {
             </Container>
 
             <Dialog ref={dialogRef}
+                    message={todoState.alerts.error}
                     content={
                         <InputField
                             type="textarea"
                             size="medium"
                             required
                             value={editTodoName}
-                            onChange={e => setEditTodoName(e.target.value)}/>
+                            onChange={e => {
+                                setEditTodoName(e.target.value);
+                                dispatch(clearUpdateTodoNameALerts());
+                            }}/>
                     }
                     onClose={() => {
+                        dispatch(clearUpdateTodoNameALerts());
                         if (dialogRef.current) {
                             dialogRef.current.close();
                         }
                     }}
                     onConfirm={onConfirmEditTodo}
+                    onClearAlertMessage={clearUpdateTodoNameALerts}
             />
         </PageLayout>
     );
