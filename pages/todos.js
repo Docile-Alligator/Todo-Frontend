@@ -22,6 +22,7 @@ const Todos = () => {
     const [allPageSize, setAllPageSize] = useState(25);
 
     const fetchIncompleteTodos = async () => {
+
         if (activeTab !== "incomplete" || incompleteTodos.length !== 0) {
             return;
         }
@@ -38,7 +39,6 @@ const Todos = () => {
             });
             const result = response.body;
             setIncompleteTodos(result);
-            console.log(result);
 
             setIncompletePage(incompletePage + 1);
         } catch (error) {
@@ -76,17 +76,29 @@ const Todos = () => {
 
     useEffect(() => {
         fetchIncompleteTodos();
-    }, [activeTab, incompleteTodos]);
+    }, [activeTab]);
 
     useEffect(() => {
         fetchAllTodos();
-    }, [activeTab, allTodos]);
+    }, [activeTab]);
+
+    const toggleTodoCompleteness = async (todoID, completed) => {
+        const result = await apiFetch("/todo/toggleCompleted", {
+            method: "POST",
+            body: {
+                todoID: todoID,
+                completed: completed
+            }
+        });
+
+        return result.body;
+    }
 
     return (
-        <PageLayout title="Create todo">
+        <PageLayout title="Todos">
             <Container>
                 <div className="content">
-                    {incompleteTodos && <Tabs tabs={[{
+                    <Tabs tabs={[{
                         title: "incomplete",
                         onClick: () => {
                             setActiveTab("incomplete")
@@ -96,10 +108,11 @@ const Todos = () => {
                             itemType={"TOGGLE"}
                             data={incompleteTodos}
                             onClicks={{
-                                toggleOnClick: () => {
-                                    setActiveTab("incomplete");
-                                },
-                                editOnClick: () => {
+                                /*toggleOnClick: async (todoID, completed) => {
+                                    return Promise.resolve(toggleTodoCompleteness(todoID, completed));
+                                },*/
+                                toggleOnClick: toggleTodoCompleteness,
+                                editOnClick: (todoId) => {
                                     setActiveTab("incomplete");
                                 }
                             }}
@@ -114,15 +127,16 @@ const Todos = () => {
                             itemType={"TOGGLE"}
                             data={allTodos}
                             onClicks={{
-                                toggleOnClick: () => {
-                                    setActiveTab("incomplete");
-                                },
+                                /*toggleOnClick: async (todoID, completed) => {
+                                    toggleTodoCompleteness(todoID, completed);
+                                },*/
+                                toggleOnClick: toggleTodoCompleteness,
                                 editOnClick: () => {
                                     setActiveTab("incomplete");
                                 }
                             }}
                         />
-                    }]} activeTab={activeTab}/>}
+                    }]} activeTab={activeTab}/>
                 </div>
             </Container>
         </PageLayout>

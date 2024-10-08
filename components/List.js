@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
 import ListToggleItem from "./ListToggleItem";
@@ -11,17 +11,26 @@ const List = ({className, data, itemType, onClicks, ...otherProps}) => {
             case "TOGGLE":
                 items.push(
                     <ListToggleItem
-                        toggleOnClick={onClicks.toggleOnClick}
+                        toggleOnClick={() => {
+                            onClicks.toggleOnClick(item.todoID, !item.completed)
+                                .then((result) => {
+                                    console.log(result);
+                                }).catch((error) => {
+                                    console.log(error);
+                                }
+                            );
+                        }}
                         editOnClick={onClicks.editOnClick}
                         title={item.name}
                         subTitle={item.created}
+
                         key={item.todoID} />
                 )
                 break;
             default:
                 items.push(
                     <ListToggleItem
-                        toggleOnClick={onClicks.toggleOnClick}
+                        toggleOnClick={() => onClicks.toggleOnClick(item.todoID, !item.completed)}
                         editOnClick={onClicks.editOnClick}
                         key={item.todoID} />
                 )
