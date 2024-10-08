@@ -8,6 +8,7 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {show} from "react-modal/lib/helpers/ariaAppHider";
+import {updateTodoName} from "../actions/todo";
 
 
 const Todos = () => {
@@ -102,11 +103,34 @@ const Todos = () => {
         return result.body;
     }
 
-    const editTodo = async (todoID, todoName) => {
+    const showEditTodoDialog = (todoID, todoName) => {
         if (dialogRef.current) {
+            setEditTodoId(todoID);
             setEditTodoName(todoName);
             dialogRef.current.showModal();
         }
+    }
+
+    const onConfirmEditTodo = async () => {
+        const result = apiFetch("/todo/editName", {
+            method: "POST",
+            body: {
+                todoID: editTodoID,
+                newTodoName: editTodoName
+            }
+        });
+
+        result.then((result) => {
+            if (result.status !== 200) {
+
+            } else {
+                if (dialogRef.current) {
+                    dialogRef.current.close();
+                }
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
     return (
@@ -124,7 +148,7 @@ const Todos = () => {
                             data={incompleteTodos}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: editTodo
+                                editOnClick: showEditTodoDialog
                             }}
                             />
                     }, {
@@ -138,7 +162,7 @@ const Todos = () => {
                             data={allTodos}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: editTodo
+                                editOnClick: showEditTodoDialog
                             }}
                         />
                     }]} activeTab={activeTab}/>
@@ -146,15 +170,20 @@ const Todos = () => {
             </Container>
 
             <Dialog ref={dialogRef}
-                content={
-                    <InputField
-                        type="textarea" size="medium" required defaultValue={editTodoName}/>
-                }
-                onClose={() => {
-                    if (dialogRef.current) {
-                        dialogRef.current.close();
+                    content={
+                        <InputField
+                            type="textarea"
+                            size="medium"
+                            required
+                            value={editTodoName}
+                            onChange={e => setEditTodoName(e.target.value)}/>
                     }
-                }}
+                    onClose={() => {
+                        if (dialogRef.current) {
+                            dialogRef.current.close();
+                        }
+                    }}
+                    onConfirm={onConfirmEditTodo}
             />
         </PageLayout>
     );

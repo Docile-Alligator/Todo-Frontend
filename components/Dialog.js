@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { Colours, Typography } from '../definitions';
 
 
-const Dialog = forwardRef(({className, content, onClose}, ref) => {
+const Dialog = forwardRef(({className, content, onConfirm, onClose}, ref) => {
     return (
         <Container className={className} ref={ref}>
             <div className="contentWrapper">{content}</div>
             <button onClick={onClose}>Close</button>
+            <button onClick={onConfirm}>Confirm</button>
         </Container>
     );
 });
