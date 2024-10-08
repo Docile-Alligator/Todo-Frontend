@@ -108,9 +108,6 @@ const Todos = () => {
                             itemType={"TOGGLE"}
                             data={incompleteTodos}
                             onClicks={{
-                                /*toggleOnClick: async (todoID, completed) => {
-                                    return Promise.resolve(toggleTodoCompleteness(todoID, completed));
-                                },*/
                                 toggleOnClick: toggleTodoCompleteness,
                                 editOnClick: (todoId) => {
                                     setActiveTab("incomplete");
@@ -127,9 +124,6 @@ const Todos = () => {
                             itemType={"TOGGLE"}
                             data={allTodos}
                             onClicks={{
-                                /*toggleOnClick: async (todoID, completed) => {
-                                    toggleTodoCompleteness(todoID, completed);
-                                },*/
                                 toggleOnClick: toggleTodoCompleteness,
                                 editOnClick: () => {
                                     setActiveTab("incomplete");

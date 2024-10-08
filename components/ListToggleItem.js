@@ -2,16 +2,27 @@ import React from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
 
-const ListToggleItem = ({className, title, subTitle, toggleOnClick, editOnClick, ...otherProps}) => {
+const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherProps}) => {
+    const [completed, setCompleted] = React.useState(item.completed);
+
     return (
         <Container className={className}>
             <div className="listToggleItemContent">
-                <p className="listToggleItemTitle">{title}</p>
-                <p className="listToggleItemSubtitle">{subTitle}</p>
+                <p className="listToggleItemTitle">{item.name}</p>
+                <p className="listToggleItemSubtitle">{item.created}</p>
             </div>
             <div className="listToggleItemControls">
                 <img className="listToggleItemToggle"
-                     onClick={toggleOnClick} src={otherProps.isDone ? "/img/checked.png" : "/img/unchecked.png"}/>
+                     onClick={() => {
+                         toggleOnClick(item.todoID, !completed)
+                             .then((result) => {
+                                 console.log(result);
+                                 setCompleted(!completed);
+                             }).catch((error) => {
+                                 console.log(error);
+                             }
+                         );
+                     }} src={completed ? "/img/checked.png" : "/img/unchecked.png"}/>
                 <img className="listToggleItemEdit"
                      onClick={editOnClick} src="/img/edit.png"/>
             </div>

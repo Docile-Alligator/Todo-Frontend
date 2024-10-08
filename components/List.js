@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
 import ListToggleItem from "./ListToggleItem";
 
-const List = ({className, data, itemType, onClicks, ...otherProps}) => {
+const List = ({className, data, itemType, onClicks}) => {
     const items = [];
 
     for (const item of data) {
@@ -11,18 +11,9 @@ const List = ({className, data, itemType, onClicks, ...otherProps}) => {
             case "TOGGLE":
                 items.push(
                     <ListToggleItem
-                        toggleOnClick={() => {
-                            onClicks.toggleOnClick(item.todoID, !item.completed)
-                                .then((result) => {
-                                    console.log(result);
-                                }).catch((error) => {
-                                    console.log(error);
-                                }
-                            );
-                        }}
+                        toggleOnClick={onClicks.toggleOnClick}
                         editOnClick={onClicks.editOnClick}
-                        title={item.name}
-                        subTitle={item.created}
+                        item={item}
 
                         key={item.todoID} />
                 )
@@ -30,8 +21,9 @@ const List = ({className, data, itemType, onClicks, ...otherProps}) => {
             default:
                 items.push(
                     <ListToggleItem
-                        toggleOnClick={() => onClicks.toggleOnClick(item.todoID, !item.completed)}
+                        toggleOnClick={onClicks.toggleOnClick}
                         editOnClick={onClicks.editOnClick}
+                        item={item}
                         key={item.todoID} />
                 )
                 break;
