@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import { Colours, Typography } from '../definitions';
 import PageLayout from '../components/PageLayout';
 import Tabs from "../components/Tabs";
 import List from "../components/List";
 import apiFetch from "../functions/apiFetch";
+import Dialog from "../components/Dialog";
+import InputField from "../components/InputField";
+import {show} from "react-modal/lib/helpers/ariaAppHider";
 
 
 const Todos = () => {
@@ -20,6 +23,11 @@ const Todos = () => {
     const [incompletePageSize, setIncompletePageSize] = useState(25);
     const [allPage, setAllPage] = useState(0);
     const [allPageSize, setAllPageSize] = useState(25);
+
+    const [editTodoID, setEditTodoId] = useState("");
+    const [editTodoName, setEditTodoName] = useState("");
+
+    const dialogRef = useRef(null);
 
     const fetchIncompleteTodos = async () => {
 
@@ -94,6 +102,13 @@ const Todos = () => {
         return result.body;
     }
 
+    const editTodo = async (todoID, todoName) => {
+        if (dialogRef.current) {
+            setEditTodoName(todoName);
+            dialogRef.current.showModal();
+        }
+    }
+
     return (
         <PageLayout title="Todos">
             <Container>
@@ -109,9 +124,7 @@ const Todos = () => {
                             data={incompleteTodos}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: (todoId) => {
-                                    setActiveTab("incomplete");
-                                }
+                                editOnClick: editTodo
                             }}
                             />
                     }, {
@@ -125,14 +138,24 @@ const Todos = () => {
                             data={allTodos}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: () => {
-                                    setActiveTab("incomplete");
-                                }
+                                editOnClick: editTodo
                             }}
                         />
                     }]} activeTab={activeTab}/>
                 </div>
             </Container>
+
+            <Dialog ref={dialogRef}
+                content={
+                    <InputField
+                        type="textarea" size="medium" required defaultValue={editTodoName}/>
+                }
+                onClose={() => {
+                    if (dialogRef.current) {
+                        dialogRef.current.close();
+                    }
+                }}
+            />
         </PageLayout>
     );
 };
@@ -141,19 +164,4 @@ export default Todos;
 
 const Container = styled.div`
     width: 100%;
-
-    .content {
-        h1 {
-            color: ${Colours.BLACK};
-            font-size: ${Typography.HEADING_SIZES.M};
-            font-weight: ${Typography.WEIGHTS.LIGHT};
-            line-height: 2.625rem;
-            margin-bottom: 2rem;
-            margin-top: 1rem;
-        }
-
-        .saveButton {
-            margin-top: 1rem;
-        }
-    }
 `;

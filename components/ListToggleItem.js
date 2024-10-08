@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
 
-const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherProps}) => {
+const ListToggleItem = ({className, item, toggleOnClick, editOnClick}) => {
     const [completed, setCompleted] = React.useState(item.completed);
 
     return (
-        <Container className={className}>
+        <Container className={className} >
             <div className="listToggleItemContent">
                 <p className="listToggleItemTitle">{item.name}</p>
                 <p className="listToggleItemSubtitle">{item.created}</p>
@@ -24,7 +24,9 @@ const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherPr
                          );
                      }} src={completed ? "/img/checked.png" : "/img/unchecked.png"}/>
                 <img className="listToggleItemEdit"
-                     onClick={editOnClick} src="/img/edit.png"/>
+                     onClick={() => {
+                         editOnClick(item.todoID, item.name);
+                     }} src="/img/edit.png"/>
             </div>
         </Container>
     );
