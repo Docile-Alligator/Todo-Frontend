@@ -1,12 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
+import {useSelector} from "react-redux";
 
-const ListToggleItem = ({className, item, toggleOnClick, editOnClick}) => {
+const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherProps}) => {
     const [completed, setCompleted] = React.useState(item.completed);
+    const todoState = useSelector((state) => state.todo);
 
     return (
-        <Container className={className} >
+        <Container className={className}>
             <div className="listToggleItemContent">
                 <p className="listToggleItemTitle">{item.name}</p>
                 <p className="listToggleItemSubtitle">{item.created}</p>

@@ -5,13 +5,9 @@ import {useDispatch, useSelector} from "react-redux";
 
 
 const Dialog = forwardRef(({className, message, content, onConfirm, onClose, onClearAlertMessage}, ref) => {
-    const dispatch = useDispatch();
-    console.log(message);
-
-    const todoState = useSelector((state) => state.todo);
     return (
         <Container className={className} ref={ref}>
-            <Alert message={message} onClose={() => dispatch(onClearAlertMessage())} />
+            <Alert message={message} onClose={onClearAlertMessage} />
             <div className="contentWrapper">{content}</div>
             <button onClick={onClose}>Close</button>
             <button onClick={onConfirm}>Confirm</button>

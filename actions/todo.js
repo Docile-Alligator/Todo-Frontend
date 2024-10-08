@@ -1,6 +1,19 @@
+// TODO/INCOMPLETE-LIST
+export const setIncompleteList = ({incomplete = []}) => ({
+    type: 'TODO/INCOMPLETE-LIST',
+    incomplete
+});
+
+// TODO/ALL-LIST
+export const setAllList = ({all = []}) => ({
+    type: 'TODO/ALL-LIST',
+    all
+});
+
 // TODO/UPDATE-NAME
-export const updateTodoName = ({name = ""}) => ({
+export const updateTodoName = ({todoID = "", name = ""}) => ({
     type: 'TODO/UPDATE-NAME',
+    todoID,
     name
 });
 

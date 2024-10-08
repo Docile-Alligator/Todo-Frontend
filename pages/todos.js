@@ -8,7 +8,13 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {show} from "react-modal/lib/helpers/ariaAppHider";
-import {clearTodoAlerts, clearUpdateTodoNameALerts, updateTodoName, updateTodoNameError} from "../actions/todo";
+import {
+    clearTodoAlerts,
+    clearUpdateTodoNameALerts, setAllList,
+    setIncompleteList,
+    updateTodoName,
+    updateTodoNameError
+} from "../actions/todo";
 import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
 
@@ -16,8 +22,8 @@ import {useDispatch, useSelector} from "react-redux";
 const Todos = () => {
     const [activeTab, setActiveTab] = useState("incomplete");
 
-    const [incompleteTodos, setIncompleteTodos] = useState([]);
-    const [allTodos, setAllTodos] = useState([]);
+    /*const [incompleteTodos, setIncompleteTodos] = useState([]);
+    const [allTodos, setAllTodos] = useState([]);*/
 
     const [incompleteLoading, setIncompleteLoading] = useState(true);
     const [allLoading, setAllLoading] = useState(true);
@@ -30,16 +36,13 @@ const Todos = () => {
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
 
-    const [alertMessage, setAlertMessage] = useState("");
-
     const dialogRef = useRef(null);
 
     const dispatch = useDispatch();
     const todoState = useSelector((state) => state.todo);
 
     const fetchIncompleteTodos = async () => {
-
-        if (activeTab !== "incomplete" || incompleteTodos.length !== 0) {
+        if (activeTab !== "incomplete" || todoState.list.incomplete.length !== 0) {
             return;
         }
 
@@ -54,7 +57,7 @@ const Todos = () => {
                 method: "GET"
             });
             const result = response.body;
-            setIncompleteTodos(result);
+            dispatch(setIncompleteList({ incomplete: result }));
 
             setIncompletePage(incompletePage + 1);
         } catch (error) {
@@ -65,7 +68,7 @@ const Todos = () => {
     };
 
     const fetchAllTodos = async () => {
-        if (activeTab !== "all" || allTodos.length !== 0) {
+        if (activeTab !== "all" || todoState.list.all.length !== 0) {
             return;
         }
 
@@ -79,8 +82,7 @@ const Todos = () => {
                 method: "GET"
             });
             const result = response.body;
-            setAllTodos(result);
-            console.log(result);
+            dispatch(setAllList({ all: result }));
 
             setAllPage(allPage + 1);
         } catch (error) {
@@ -120,7 +122,7 @@ const Todos = () => {
 
     const onConfirmEditTodo = async () => {
         dispatch(clearUpdateTodoNameALerts());
-        
+
         const result = apiFetch("/todo/editName", {
             method: "POST",
             body: {
@@ -154,7 +156,7 @@ const Todos = () => {
                         content: <List
                             className={"incompleteTodosList"}
                             itemType={"TOGGLE"}
-                            data={incompleteTodos}
+                            data={todoState.list.incomplete}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
                                 editOnClick: showEditTodoDialog
@@ -168,7 +170,7 @@ const Todos = () => {
                         content: <List
                             className={"allTodosList"}
                             itemType={"TOGGLE"}
-                            data={allTodos}
+                            data={todoState.list.all}
                             onClicks={{
                                 toggleOnClick: toggleTodoCompleteness,
                                 editOnClick: showEditTodoDialog
@@ -198,7 +200,7 @@ const Todos = () => {
                         }
                     }}
                     onConfirm={onConfirmEditTodo}
-                    onClearAlertMessage={clearUpdateTodoNameALerts}
+                    onClearAlertMessage={() => dispatch(clearUpdateTodoNameALerts())}
             />
         </PageLayout>
     );

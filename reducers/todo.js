@@ -1,6 +1,11 @@
 const defaultState = {
     body: {
+        todoID: "",
         name: ""
+    },
+    list: {
+        incomplete: [],
+        all: []
     },
     alerts: {
         error: "",
@@ -11,11 +16,28 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
     switch(action.type) {
+        case 'TODO/INCOMPLETE-LIST':
+            return {
+                ...state,
+                list: {
+                    incomplete: action.incomplete,
+                    all: state.list.all
+                }
+            };
+        case 'TODO/ALL-LIST':
+            return {
+                ...state,
+                list: {
+                    incomplete: state.list.incomplete,
+                    all: action.all,
+                }
+            };
         case 'TODO/UPDATE-NAME':
             return {
                 ...state,
                 body: {
                     ...state.body,
+                    todoID: action.todoID,
                     name: action.name
                 }
             };
