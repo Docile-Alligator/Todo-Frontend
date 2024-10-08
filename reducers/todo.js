@@ -35,10 +35,13 @@ export default (state = defaultState, action) => {
         case 'TODO/UPDATE-NAME':
             return {
                 ...state,
-                body: {
-                    ...state.body,
-                    todoID: action.todoID,
-                    name: action.name
+                list: {
+                    incomplete: state.list.incomplete.map(todo => {
+                        return todo.todoID === action.todoID ? { ...todo, name: action.name } : todo;
+                    }),
+                    all: state.list.all.map(todo => {
+                        return todo.todoID === action.todoID ? { ...todo, name: action.name } : todo;
+                    })
                 }
             };
         case 'TODO/CLEAR-UPDATE-NAME-ALERTS':

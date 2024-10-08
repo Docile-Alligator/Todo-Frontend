@@ -22,9 +22,6 @@ import {useDispatch, useSelector} from "react-redux";
 const Todos = () => {
     const [activeTab, setActiveTab] = useState("incomplete");
 
-    /*const [incompleteTodos, setIncompleteTodos] = useState([]);
-    const [allTodos, setAllTodos] = useState([]);*/
-
     const [incompleteLoading, setIncompleteLoading] = useState(true);
     const [allLoading, setAllLoading] = useState(true);
 
@@ -138,6 +135,7 @@ const Todos = () => {
                 if (dialogRef.current) {
                     dialogRef.current.close();
                 }
+                dispatch(updateTodoName({ todoID: editTodoID, name: editTodoName }));
             }
         }).catch((error) => {
             dispatch(updateTodoNameError({ error: error }));
