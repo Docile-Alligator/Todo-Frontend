@@ -1,36 +1,13 @@
 import React, {useRef} from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
-import ListToggleItem from "./ListToggleItem";
+import TodoListItem from "./TodoListItem";
 
-const List = ({className, data, itemType, onClicks, ...otherProps}) => {
+const List = ({className, data, listEntry}) => {
     const items = [];
 
     for (const item of data) {
-        switch (itemType) {
-            case "TOGGLE":
-                items.push(
-                    <ListToggleItem
-                        toggleOnClick={onClicks.toggleOnClick}
-                        editOnClick={onClicks.editOnClick}
-                        item={item}
-                        {...otherProps}
-
-                        key={item.todoID} />
-                )
-                break;
-            default:
-                items.push(
-                    <ListToggleItem
-                        toggleOnClick={onClicks.toggleOnClick}
-                        editOnClick={onClicks.editOnClick}
-                        item={item}
-                        {...otherProps}
-
-                        key={item.todoID} />
-                )
-                break;
-        }
+        items.push(<div key={item.todoID}>{listEntry(item)}</div>);
     }
 
     return (

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
 import {useSelector} from "react-redux";
 
-const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherProps}) => {
+const TodoListItem = ({className, item, toggleOnClick, editOnClick}) => {
     return (
         <Container className={className}>
             <div className="listToggleItemContent">
@@ -22,7 +22,7 @@ const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherPr
     );
 };
 
-export default ListToggleItem;
+export default TodoListItem;
 
 const Container = styled.li`
     line-height: 32px;

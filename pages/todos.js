@@ -17,6 +17,7 @@ import {
 } from "../actions/todo";
 import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
+import TodoListItem from "../components/TodoListItem";
 
 
 const Todos = () => {
@@ -39,10 +40,6 @@ const Todos = () => {
     const todoState = useSelector((state) => state.todo);
 
     const fetchIncompleteTodos = async () => {
-        if (activeTab !== "incomplete" || todoState.list.incomplete.length !== 0) {
-            return;
-        }
-
         const params = new URLSearchParams({
             page: incompletePage,
             pageSize: incompletePageSize,
@@ -65,10 +62,6 @@ const Todos = () => {
     };
 
     const fetchAllTodos = async () => {
-        if (activeTab !== "all" || todoState.list.all.length !== 0) {
-            return;
-        }
-
         const params = new URLSearchParams({
             page: allPage,
             pageSize: allPageSize
@@ -91,11 +84,11 @@ const Todos = () => {
 
     useEffect(() => {
         fetchIncompleteTodos();
-    }, [activeTab]);
+    }, []);
 
     useEffect(() => {
         fetchAllTodos();
-    }, [activeTab]);
+    }, []);
 
     const toggleTodoCompleteness = async (todoID, completed) => {
         const result = apiFetch("/todo/toggleCompleted", {
@@ -163,12 +156,11 @@ const Todos = () => {
                         },
                         content: <List
                             className={"incompleteTodosList"}
-                            itemType={"TOGGLE"}
+                            listEntry={(item) => <TodoListItem item={item}
+                                                                toggleOnClick={toggleTodoCompleteness}
+                                                                editOnClick={showEditTodoDialog}/>
+                            }
                             data={todoState.list.incomplete}
-                            onClicks={{
-                                toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: showEditTodoDialog
-                            }}
                             />
                     }, {
                         title: "all",
@@ -177,12 +169,11 @@ const Todos = () => {
                         },
                         content: <List
                             className={"allTodosList"}
-                            itemType={"TOGGLE"}
                             data={todoState.list.all}
-                            onClicks={{
-                                toggleOnClick: toggleTodoCompleteness,
-                                editOnClick: showEditTodoDialog
-                            }}
+                            listEntry={(item) => <TodoListItem item={item}
+                                                                toggleOnClick={toggleTodoCompleteness}
+                                                                editOnClick={showEditTodoDialog}/>
+                            }
                         />
                     }]} activeTab={activeTab}/>
                 </div>
