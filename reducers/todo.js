@@ -1,8 +1,6 @@
 const defaultState = {
     body: {
-        todoID: "",
-        name: "",
-        isCompleted: false
+        name: ""
     },
     list: {
         incomplete: [],
