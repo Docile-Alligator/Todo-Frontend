@@ -11,7 +11,8 @@ const defaultState = {
     alerts: {
         error: "",
         success: ""
-    }
+    },
+    listLoadingInfo: ""
 };
 
 
@@ -33,6 +34,16 @@ export default (state = defaultState, action) => {
                     all: action.all,
                 }
             };
+        case 'TODO/UPDATE-LIST-LOADING-INFO':
+            return {
+                ...state,
+                listLoadingInfo: action.info
+            }
+        case 'TODO/CLEAR-LIST-LOADING-INFO':
+            return {
+                ...state,
+                listLoadingInfo: defaultState.listLoadingInfo
+            }
         case 'TODO/UPDATE-NAME':
             return {
                 ...state,

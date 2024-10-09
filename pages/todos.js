@@ -1,23 +1,23 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
-import { Colours, Typography } from '../definitions';
 import PageLayout from '../components/PageLayout';
 import Tabs from "../components/Tabs";
 import List from "../components/List";
 import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
-import {show} from "react-modal/lib/helpers/ariaAppHider";
 import {
-    clearTodoAlerts,
-    clearUpdateTodoNameALerts, setAllList,
-    setIncompleteList, updateCompleted, updateCompleteness,
+    clearListLoadingInfo,
+    clearUpdateTodoNameALerts,
+    setAllList,
+    setIncompleteList,
+    updateListLoadingInfo,
     updateTodoName,
     updateTodoNameError
 } from "../actions/todo";
 import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
-import TodoListItem from "../components/TodoListItem";
+import TodoListEntry from "../components/TodoListEntry";
 
 
 const Todos = () => {
@@ -26,9 +26,10 @@ const Todos = () => {
     const [incompleteLoading, setIncompleteLoading] = useState(true);
     const [allLoading, setAllLoading] = useState(true);
 
-    const [incompletePage, setIncompletePage] = useState(0);
+    const [incompleteAnchor, setIncompleteAnchor] = useState([]);
+    const [allAnchor, setAllAnchor] = useState([]);
+
     const [incompletePageSize, setIncompletePageSize] = useState(25);
-    const [allPage, setAllPage] = useState(0);
     const [allPageSize, setAllPageSize] = useState(25);
 
     const [editTodoID, setEditTodoId] = useState("");
@@ -39,9 +40,12 @@ const Todos = () => {
     const dispatch = useDispatch();
     const todoState = useSelector((state) => state.todo);
 
-    const fetchIncompleteTodos = async () => {
+    const fetchIncompleteTodos = async ({before = undefined, after = undefined}) => {
+        dispatch(clearListLoadingInfo());
+
         const params = new URLSearchParams({
-            page: incompletePage,
+            before: before,
+            after: after,
             pageSize: incompletePageSize,
             findIncomplete: true
         });
@@ -51,19 +55,25 @@ const Todos = () => {
                 method: "GET"
             });
             const result = response.body;
-            dispatch(setIncompleteList({ incomplete: result }));
-
-            setIncompletePage(incompletePage + 1);
+            if (result.result.length === 0) {
+                dispatch(updateListLoadingInfo({ info: "No data." }));
+            } else {
+                dispatch(setIncompleteList({ incomplete: result.result }));
+                setIncompleteAnchor([result.before, result.after]);
+            }
         } catch (error) {
-            console.error('Error fetching data:', error);
+            dispatch(updateListLoadingInfo({ info: error.message }));
         } finally {
             setIncompleteLoading(false);
         }
     };
 
-    const fetchAllTodos = async () => {
+    const fetchAllTodos = async ({before = undefined, after = undefined}) => {
+        dispatch(clearListLoadingInfo());
+
         const params = new URLSearchParams({
-            page: allPage,
+            before: before,
+            after: after,
             pageSize: allPageSize
         });
 
@@ -72,44 +82,40 @@ const Todos = () => {
                 method: "GET"
             });
             const result = response.body;
-            dispatch(setAllList({ all: result }));
-
-            setAllPage(allPage + 1);
+            if (result.result.length === 0) {
+                // No todos
+                dispatch(updateListLoadingInfo({ info: "No data." }));
+            } else {
+                dispatch(setAllList({ all: result.result }));
+                setAllAnchor([result.before, result.after]);
+            }
         } catch (error) {
-            console.error('Error fetching data:', error);
+            dispatch(updateListLoadingInfo({ info: error.message }));
         } finally {
             setAllLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchIncompleteTodos();
+        fetchIncompleteTodos({});
     }, []);
 
     useEffect(() => {
-        fetchAllTodos();
+        fetchAllTodos({});
     }, []);
 
+    useEffect(() => {
+        dispatch(clearListLoadingInfo());
+    }, [activeTab]);
+
     const toggleTodoCompleteness = async (todoID, completed) => {
-        const result = apiFetch("/todo/toggleCompleted", {
+        return apiFetch("/todo/toggleCompleted", {
             method: "POST",
             body: {
                 todoID: todoID,
                 completed: completed
             }
         });
-
-        result.then((result) => {
-            if (result.status === 200) {
-                dispatch(updateCompleted({ todoID: todoID, completed: completed }));
-            } else {
-                console.log(result.error);
-            }
-        }).catch((error) => {
-            console.log(error);
-        })
-
-        return result.body;
     }
 
     const showEditTodoDialog = (todoID, todoName) => {
@@ -154,27 +160,39 @@ const Todos = () => {
                         onClick: () => {
                             setActiveTab("incomplete")
                         },
-                        content: <List
-                            className={"incompleteTodosList"}
-                            listEntry={(item) => <TodoListItem item={item}
-                                                                toggleOnClick={toggleTodoCompleteness}
-                                                                editOnClick={showEditTodoDialog}/>
-                            }
-                            data={todoState.list.incomplete}
+                        content: <div>
+                            <List
+                                className={"incompleteTodosList"}
+                                listEntry={(item) => <TodoListEntry item={item}
+                                                                    toggleOnClick={toggleTodoCompleteness}
+                                                                    editOnClick={showEditTodoDialog}/>
+                                }
+                                data={todoState.list.incomplete}
                             />
+                            <Alert message={todoState.listLoadingInfo} onClose={() => dispatch(clearListLoadingInfo())} />
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })}/>
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })}/>
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})}/>
+                        </div>
                     }, {
                         title: "all",
                         onClick: () => {
                             setActiveTab("all")
                         },
-                        content: <List
-                            className={"allTodosList"}
-                            data={todoState.list.all}
-                            listEntry={(item) => <TodoListItem item={item}
-                                                                toggleOnClick={toggleTodoCompleteness}
-                                                                editOnClick={showEditTodoDialog}/>
-                            }
-                        />
+                        content: <div>
+                            <List
+                                className={"allTodosList"}
+                                data={todoState.list.all}
+                                listEntry={(item) => <TodoListEntry item={item}
+                                                                    toggleOnClick={toggleTodoCompleteness}
+                                                                    editOnClick={showEditTodoDialog}/>
+                                }
+                            />
+                            <Alert message={todoState.listLoadingInfo} onClose={() => dispatch(clearListLoadingInfo())} />
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })}/>
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })}/>
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})}/>
+                        </div>
                     }]} activeTab={activeTab}/>
                 </div>
             </Container>
@@ -209,4 +227,8 @@ export default Todos;
 
 const Container = styled.div`
     width: 100%;
+    
+    .pageIcon {
+        width: 3rem;
+    }
 `;

@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
 import styled from "styled-components";
 import {Colours, Typography} from "../definitions";
-import TodoListItem from "./TodoListItem";
+import TodoListEntry from "./TodoListEntry";
 
 const List = ({className, data, listEntry}) => {
     const items = [];
