@@ -10,17 +10,6 @@ export const setAllList = ({all = []}) => ({
     all
 });
 
-// TODO/UPDATE-LIST-LOADING-INFO
-export const updateListLoadingInfo = ({info = ""}) => ({
-    type: 'TODO/UPDATE-LIST-LOADING-INFO',
-    info
-});
-
-// TODO/CLEAR-LIST-LOADING-INFO
-export const clearListLoadingInfo = () => ({
-    type: 'TODO/CLEAR-LIST-LOADING-INFO',
-});
-
 // TODO/UPDATE-NAME
 export const updateTodoName = ({todoID = "", name = ""}) => ({
     type: 'TODO/UPDATE-NAME',

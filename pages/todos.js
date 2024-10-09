@@ -7,11 +7,9 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {
-    clearListLoadingInfo,
     clearUpdateTodoNameALerts,
     setAllList,
     setIncompleteList,
-    updateListLoadingInfo,
     updateTodoName,
     updateTodoNameError
 } from "../actions/todo";
@@ -25,6 +23,8 @@ const Todos = () => {
 
     const [incompleteLoading, setIncompleteLoading] = useState(true);
     const [allLoading, setAllLoading] = useState(true);
+    const [incompleteLoadingInfo, setIncompleteLoadingInfo] = useState("");
+    const [allLoadingInfo, setAllLoadingInfo] = useState("");
 
     const [incompleteAnchor, setIncompleteAnchor] = useState([]);
     const [allAnchor, setAllAnchor] = useState([]);
@@ -43,7 +43,8 @@ const Todos = () => {
     const todoState = useSelector((state) => state.todo);
 
     const fetchIncompleteTodos = async ({before = undefined, after = undefined}) => {
-        dispatch(clearListLoadingInfo());
+        setIncompleteLoadingInfo("");
+        setIncompleteLoading(true);
 
         const params = new URLSearchParams({
             before: before,
@@ -58,20 +59,21 @@ const Todos = () => {
             });
             const result = response.body;
             if (result.result.length === 0) {
-                dispatch(updateListLoadingInfo({ info: "No data." }));
+                setIncompleteLoadingInfo("No data.");
             } else {
                 dispatch(setIncompleteList({ incomplete: result.result }));
                 setIncompleteAnchor([result.before, result.after]);
             }
         } catch (error) {
-            dispatch(updateListLoadingInfo({ info: error.message }));
+            setIncompleteLoadingInfo(error.message);
         } finally {
             setIncompleteLoading(false);
         }
     };
 
     const fetchAllTodos = async ({before = undefined, after = undefined}) => {
-        dispatch(clearListLoadingInfo());
+        setAllLoadingInfo("");
+        setAllLoading(true);
 
         const params = new URLSearchParams({
             before: before,
@@ -86,13 +88,13 @@ const Todos = () => {
             const result = response.body;
             if (result.result.length === 0) {
                 // No todos
-                dispatch(updateListLoadingInfo({ info: "No data." }));
+                setAllLoadingInfo("No data.");
             } else {
                 dispatch(setAllList({ all: result.result }));
                 setAllAnchor([result.before, result.after]);
             }
         } catch (error) {
-            dispatch(updateListLoadingInfo({ info: error.message }));
+            setAllLoadingInfo(error.message);
         } finally {
             setAllLoading(false);
         }
@@ -105,10 +107,6 @@ const Todos = () => {
     useEffect(() => {
         fetchAllTodos({});
     }, []);
-
-    useEffect(() => {
-        dispatch(clearListLoadingInfo());
-    }, [activeTab]);
 
     const toggleTodoCompleteness = async (todoID, completed) => {
         return apiFetch("/todo/toggleCompleted", {
@@ -175,7 +173,7 @@ const Todos = () => {
                                 }
                                 data={todoState.list.incomplete}
                             />
-                            <Alert message={todoState.listLoadingInfo} onClose={() => dispatch(clearListLoadingInfo())} />
+                            <Alert message={incompleteLoadingInfo} onClose={() => setIncompleteLoadingInfo("")} />
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })}/>
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })}/>
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})}/>
@@ -194,7 +192,7 @@ const Todos = () => {
                                                                     editOnClick={showEditTodoDialog}/>
                                 }
                             />
-                            <Alert message={todoState.listLoadingInfo} onClose={() => dispatch(clearListLoadingInfo())} />
+                            <Alert message={allLoadingInfo} onClose={() => setAllLoadingInfo("")} />
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })}/>
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })}/>
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})}/>
