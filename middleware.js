@@ -20,7 +20,7 @@ export async function middleware(req, event) {
         }
         catch (err) {
             console.log(err);
-            return NextResponse.redirect(`${config.FRONT_END_URL}/signin`);
+            return NextResponse.redirect(`${config.FRONT_END_URL}/signin?redirect=${req.nextUrl.pathname}`);
         }
     }
     else {

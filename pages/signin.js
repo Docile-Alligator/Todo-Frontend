@@ -11,6 +11,7 @@ import InputField from '../components/InputField';
 import Button from '../components/Button';
 import PageLayout from '../components/PageLayout';
 import Alert from '../components/Alert';
+import {useSearchParams} from "next/navigation";
 
 
 const SignIn = () => {
@@ -18,6 +19,7 @@ const SignIn = () => {
     const signInState = useSelector((state) => state.signIn);
     const dispatch = useDispatch();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -32,7 +34,9 @@ const SignIn = () => {
             if (response.status === 200) {
                 dispatch(clearSignIn());
                 dispatch(updateSignInSuccess({ success: "Sign in successful, redirecting..." }));
-                router.push("/");
+                
+                const redirectUrl = searchParams.get('redirect');
+                router.push(redirectUrl === undefined ? "/" : redirectUrl);
             }
             else {
                 dispatch(updateSignInError({ error: response.body.error }));
