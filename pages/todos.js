@@ -35,6 +35,8 @@ const Todos = () => {
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
 
+    const [isConfirmingEditingName, setIsConfirmingEditingName] = useState(false);
+
     const dialogRef = useRef(null);
 
     const dispatch = useDispatch();
@@ -119,6 +121,7 @@ const Todos = () => {
     }
 
     const showEditTodoDialog = (todoID, todoName) => {
+        setIsConfirmingEditingName(false);
         if (dialogRef.current) {
             setEditTodoId(todoID);
             setEditTodoName(todoName);
@@ -127,6 +130,7 @@ const Todos = () => {
     }
 
     const onConfirmEditTodo = async () => {
+        setIsConfirmingEditingName(true);
         dispatch(clearUpdateTodoNameALerts());
 
         const result = apiFetch("/todo/editName", {
@@ -146,8 +150,10 @@ const Todos = () => {
                 }
                 dispatch(updateTodoName({ todoID: editTodoID, name: editTodoName }));
             }
+            setIsConfirmingEditingName(false);
         }).catch((error) => {
             dispatch(updateTodoNameError({ error: error }));
+            setIsConfirmingEditingName(false);
         });
     }
 
@@ -210,6 +216,7 @@ const Todos = () => {
                                 dispatch(clearUpdateTodoNameALerts());
                             }}/>
                     }
+                    isConfirming={isConfirmingEditingName}
                     onClose={() => {
                         dispatch(clearUpdateTodoNameALerts());
                         if (dialogRef.current) {
