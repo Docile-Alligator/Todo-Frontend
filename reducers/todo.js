@@ -54,6 +54,10 @@ export default (state = defaultState, action) => {
                     all: state.list.all.map(todo => {
                         return todo.todoID === action.todoID ? { ...todo, name: action.name } : todo;
                     })
+                },
+                body: {
+                    ...state.body,
+                    name: action.name
                 }
             };
         case 'TODO/CLEAR-UPDATE-NAME-ALERTS':
