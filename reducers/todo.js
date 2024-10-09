@@ -72,39 +72,34 @@ export default (state = defaultState, action) => {
                         break;
                     }
                 }
-                /*for (const item of state.list.all) {
-                    if (item.todoID === action.todoID) {
-                        if (!hasItem) {
-                            state.list.incomplete.push(item);
-                        }
-                        item.tod
-                    }
-                }*/
 
                 return {
                     ...state,
                     list: {
                         all: state.list.all.map(todo => {
-                            if (todo.todoID === action.todoID) {
-                                let updated = { ...todo, completed: action.completed };
-                                if (!hasItem) {
-                                    if (state.list.incomplete.length === 0) {
-                                        state.list.incomplete.push(updated);
-                                    } else {
-                                        for (const [i, v] of state.list.incomplete.entries()) {
-                                            if (v.created.localeCompare(todo.created) === 1) {
-                                                state.list.incomplete.splice(i, 0, updated);
-                                                break;
-                                            } else if (i === state.list.incomplete.length - 1) {
-                                                state.list.incomplete.splice(i + 1, 0, updated);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
+                            if (todo.todoID !== action.todoID) {
+                                return todo;
+                            }
+
+                            let updated = { ...todo, completed: action.completed };
+                            if (hasItem) {
                                 return updated;
                             }
-                            return todo;
+
+                            if (state.list.incomplete.length === 0) {
+                                state.list.incomplete.push(updated);
+                            } else {
+                                for (const [i, v] of state.list.incomplete.entries()) {
+                                    if (v.created.localeCompare(todo.created) === 1) {
+                                        state.list.incomplete.splice(i, 0, updated);
+                                        break;
+                                    } else if (i === state.list.incomplete.length - 1) {
+                                        state.list.incomplete.splice(i + 1, 0, updated);
+                                        break;
+                                    }
+                                }
+                            }
+                            return updated;
                         }),
                         incomplete: state.list.incomplete
                     }
