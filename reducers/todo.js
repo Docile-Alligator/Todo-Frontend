@@ -1,7 +1,8 @@
 const defaultState = {
     body: {
         todoID: "",
-        name: ""
+        name: "",
+        isCompleted: false
     },
     list: {
         incomplete: [],
@@ -51,6 +52,64 @@ export default (state = defaultState, action) => {
                     ...defaultState.alerts
                 }
             };
+        case 'TODO/UPDATE-COMPLETENESS':
+            if (action.completed) {
+                return {
+                    ...state,
+                    list: {
+                        incomplete: state.list.incomplete.filter(todo => todo.todoID !== action.todoID),
+                        all: state.list.all.map(todo => {
+                            return todo.todoID === action.todoID ? { ...todo, completed: action.completed } : todo;
+                        })
+                    }
+                };
+            } else {
+                let hasItem = false;
+                for (const item of state.list.incomplete) {
+                    if (item.todoID === action.todoID) {
+                        hasItem = true;
+                        item.completed = action.completed;
+                        break;
+                    }
+                }
+                /*for (const item of state.list.all) {
+                    if (item.todoID === action.todoID) {
+                        if (!hasItem) {
+                            state.list.incomplete.push(item);
+                        }
+                        item.tod
+                    }
+                }*/
+
+                return {
+                    ...state,
+                    list: {
+                        all: state.list.all.map(todo => {
+                            if (todo.todoID === action.todoID) {
+                                let updated = { ...todo, completed: action.completed };
+                                if (!hasItem) {
+                                    if (state.list.incomplete.length === 0) {
+                                        state.list.incomplete.push(updated);
+                                    } else {
+                                        for (const [i, v] of state.list.incomplete.entries()) {
+                                            if (v.created.localeCompare(todo.created) === 1) {
+                                                state.list.incomplete.splice(i, 0, updated);
+                                                break;
+                                            } else if (i === state.list.incomplete.length - 1) {
+                                                state.list.incomplete.splice(i + 1, 0, updated);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                return updated;
+                            }
+                            return todo;
+                        }),
+                        incomplete: state.list.incomplete
+                    }
+                };
+            }
         case 'TODO/ERROR':
             return {
                 ...state,

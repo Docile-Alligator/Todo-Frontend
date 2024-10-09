@@ -28,6 +28,13 @@ export const clearUpdateTodoNameALerts = () => ({
     type: 'TODO/CLEAR-ALERTS'
 });
 
+// TODO/UPDATE-COMPLETED
+export const updateCompleted = ({todoID = "", completed = false}) => ({
+    type: 'TODO/UPDATE-COMPLETENESS',
+    todoID,
+    completed
+});
+
 // TODO/CLEAR
 export const clearTodo = () => ({
     type: 'TODO/CLEAR'

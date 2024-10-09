@@ -11,7 +11,7 @@ import {show} from "react-modal/lib/helpers/ariaAppHider";
 import {
     clearTodoAlerts,
     clearUpdateTodoNameALerts, setAllList,
-    setIncompleteList,
+    setIncompleteList, updateCompleted, updateCompleteness,
     updateTodoName,
     updateTodoNameError
 } from "../actions/todo";
@@ -98,13 +98,23 @@ const Todos = () => {
     }, [activeTab]);
 
     const toggleTodoCompleteness = async (todoID, completed) => {
-        const result = await apiFetch("/todo/toggleCompleted", {
+        const result = apiFetch("/todo/toggleCompleted", {
             method: "POST",
             body: {
                 todoID: todoID,
                 completed: completed
             }
         });
+
+        result.then((result) => {
+            if (result.status === 200) {
+                dispatch(updateCompleted({ todoID: todoID, completed: completed }));
+            } else {
+                console.log(result.error);
+            }
+        }).catch((error) => {
+            console.log(error);
+        })
 
         return result.body;
     }
@@ -130,7 +140,7 @@ const Todos = () => {
 
         result.then((result) => {
             if (result.status !== 200) {
-                dispatch(updateTodoNameError({ error: "Changing todo name failed" }));
+                dispatch(updateTodoNameError({ error: result.error }));
             } else {
                 if (dialogRef.current) {
                     dialogRef.current.close();

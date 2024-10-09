@@ -4,9 +4,6 @@ import {Colours, Typography} from "../definitions";
 import {useSelector} from "react-redux";
 
 const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherProps}) => {
-    const [completed, setCompleted] = React.useState(item.completed);
-    const todoState = useSelector((state) => state.todo);
-
     return (
         <Container className={className}>
             <div className="listToggleItemContent">
@@ -15,16 +12,7 @@ const ListToggleItem = ({className, item, toggleOnClick, editOnClick, ...otherPr
             </div>
             <div className="listToggleItemControls">
                 <img className="listToggleItemToggle"
-                     onClick={() => {
-                         toggleOnClick(item.todoID, !completed)
-                             .then((result) => {
-                                 console.log(result);
-                                 setCompleted(!completed);
-                             }).catch((error) => {
-                                 console.log(error);
-                             }
-                         );
-                     }} src={completed ? "/img/checked.png" : "/img/unchecked.png"}/>
+                     onClick={() => toggleOnClick(item.todoID, !item.completed)} src={item.completed ? "/img/checked.png" : "/img/unchecked.png"}/>
                 <img className="listToggleItemEdit"
                      onClick={() => {
                          editOnClick(item.todoID, item.name);
