@@ -16,7 +16,6 @@ import {
 import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
 import TodoListEntry from "../components/TodoListEntry";
-import todo from "../reducers/todo";
 import Button from "../components/Button";
 import Link from "next/link";
 
@@ -24,20 +23,34 @@ import Link from "next/link";
 const Todos = () => {
     const [activeTab, setActiveTab] = useState("incomplete");
 
+    // These two states can be used in the future to show a progress bar
     const [incompleteLoading, setIncompleteLoading] = useState(true);
     const [allLoading, setAllLoading] = useState(true);
+
+    // These two states are used to track the loading info. E.g. when there is an error loading todos.
+    // They will be shown on an Alert component.
     const [incompleteLoadingInfo, setIncompleteLoadingInfo] = useState("");
     const [allLoadingInfo, setAllLoadingInfo] = useState("");
 
+    /*
+        These two anchors are for pagination purposes.
+        Format: [before, after]
+        before is the created field of the first item in the todoState.list.<incomplete or all>.
+        after is the created field of the last item in the todoState.list.<incomplete or all>.
+        Default value: [undefined, undefined]. In this case, the before and after field will not be used in the API.
+    */
     const [incompleteAnchor, setIncompleteAnchor] = useState([]);
     const [allAnchor, setAllAnchor] = useState([]);
 
+    // This is the page size used in each todo list. In the future we can add an option to change it using the corresponding set function.
     const [incompletePageSize, setIncompletePageSize] = useState(3);
     const [allPageSize, setAllPageSize] = useState(3);
 
+    // These two states keep track of the todoID and the new name of the todo item that is being updated.
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
 
+    // This state controls the 
     const [isConfirmingEditingName, setIsConfirmingEditingName] = useState(false);
 
     const dialogRef = useRef(null);
@@ -225,7 +238,7 @@ const Todos = () => {
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })} />
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})} />
                         </div>
-                    }]} activeTab={activeTab}/>
+                    }]} activeTab={activeTab} />
                 </div>
             </Container>
 
@@ -240,7 +253,7 @@ const Todos = () => {
                             onChange={e => {
                                 setEditTodoName(e.target.value);
                                 dispatch(clearModifyTodoAlerts());
-                            }}/>
+                            }} />
                     }
                     isConfirming={isConfirmingEditingName}
                     onClose={() => {
@@ -250,8 +263,7 @@ const Todos = () => {
                         }
                     }}
                     onConfirm={onConfirmEditTodo}
-                    onClearAlertMessage={() => dispatch(clearModifyTodoAlerts())}
-            />
+                    onClearAlertMessage={() => dispatch(clearModifyTodoAlerts())} />
         </PageLayout>
     );
 };
