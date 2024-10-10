@@ -29,8 +29,8 @@ const Todos = () => {
     const [incompleteAnchor, setIncompleteAnchor] = useState([]);
     const [allAnchor, setAllAnchor] = useState([]);
 
-    const [incompletePageSize, setIncompletePageSize] = useState(25);
-    const [allPageSize, setAllPageSize] = useState(25);
+    const [incompletePageSize, setIncompletePageSize] = useState(3);
+    const [allPageSize, setAllPageSize] = useState(3);
 
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
@@ -65,7 +65,8 @@ const Todos = () => {
                 setIncompleteAnchor([result.before, result.after]);
             }
         } catch (error) {
-            setIncompleteLoadingInfo(error.message);
+            console.error(error);
+            setIncompleteLoadingInfo("Server error.");
         } finally {
             setIncompleteLoading(false);
         }
@@ -94,7 +95,8 @@ const Todos = () => {
                 setAllAnchor([result.before, result.after]);
             }
         } catch (error) {
-            setAllLoadingInfo(error.message);
+            console.error(error);
+            setIncompleteLoadingInfo("Server error.");
         } finally {
             setAllLoading(false);
         }
@@ -107,6 +109,14 @@ const Todos = () => {
     useEffect(() => {
         fetchAllTodos({});
     }, []);
+
+    useEffect(() => {
+        if (activeTab === "incomplete") {
+            setAllLoadingInfo("");
+        } else {
+            setIncompleteLoadingInfo("");
+        }
+    }, [activeTab])
 
     const toggleTodoCompleteness = async (todoID, completed) => {
         return apiFetch("/todo/toggleCompleted", {
