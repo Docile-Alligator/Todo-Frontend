@@ -75,10 +75,6 @@ const Container = styled.li`
         text-align: left;
     }
     
-    .listToggleItemControls {
-        float: right;
-    }
-    
     .listToggleItemControls img {
         display: block;
         width: 2rem;

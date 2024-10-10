@@ -34,6 +34,10 @@ export default (state = defaultState, action) => {
         case 'TODO/UPDATE-NAME':
             return {
                 ...state,
+                body: {
+                    ...defaultState.body,
+                    name: action.name
+                },
                 list: {
                     incomplete: state.list.incomplete.map(todo => {
                         return todo.todoID === action.todoID ? { ...todo, name: action.name } : todo;

@@ -27,9 +27,11 @@ const Navbar = ({className, showSignOutButton}) => {
     return (
         <Header className={className}>
             <div className="headerContents">
-                <Link href="/" className="headerLogoWrapper">
-                    <img className="headerLogo" src="/img/todox-logo-white.svg" />
-                </Link>
+                <div>
+                    <Link href="/" className="headerLogoWrapper">
+                        <img className="headerLogo" src="/img/todox-logo-white.svg" />
+                    </Link>
+                </div>
                 { showSignOutButton && <Button text="Sign out" onClick={signOut} size="medium" variant="primary" disabled={isSigningOut} /> }
             </div>
         </Header>
@@ -54,13 +56,9 @@ const Header = styled.header`
         height: 100%;
     }
     
-    .headerLogoWrapper {
+    .headerContents > div {
         flex-grow: 1;
         display: inline-block;
-    }
-
-    Button {
-        float: right;
     }
     
     .headerLogo {

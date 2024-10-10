@@ -17,6 +17,8 @@ import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
 import TodoListEntry from "../components/TodoListEntry";
 import todo from "../reducers/todo";
+import Button from "../components/Button";
+import Link from "next/link";
 
 
 const Todos = () => {
@@ -179,6 +181,10 @@ const Todos = () => {
         <PageLayout title="Todos">
             <Container>
                 <div className="content">
+                    <Link href="/create">
+                        <Button text="Create Todo" size="medium" variant="primary" />
+                    </Link>
+
                     <Tabs tabs={[{
                         title: "incomplete",
                         onClick: () => {
