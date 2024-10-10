@@ -50,7 +50,10 @@ const Todos = () => {
     const [editTodoID, setEditTodoId] = useState("");
     const [editTodoName, setEditTodoName] = useState("");
 
-    // This state controls the confirm button active state in the dialog. Users will not be able to abuse the confirm button when performing the edit API call.
+    /*
+        This state controls the confirm button disabled state in the dialog.
+        Users will not be able to abuse the confirm button when performing the edit API call.
+    */
     const [isConfirmingEditingName, setIsConfirmingEditingName] = useState(false);
 
     // Having this dialog ref allows us to perform show/hide operation of the dialog.
@@ -222,7 +225,7 @@ const Todos = () => {
         This is because we want to show the alert message on the item in the todo list itself.
      */
     const deleteTodo = async (todoID) => {
-        return apiFetch("/todo/delete", {
+        return apiFetch("/todo", {
             method: "DELETE",
             body: {
                 todoID: todoID

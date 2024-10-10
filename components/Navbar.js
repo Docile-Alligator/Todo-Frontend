@@ -8,6 +8,10 @@ import {useRouter} from "next/router";
 
 
 const Navbar = ({className, showSignOutButton}) => {
+    /*
+        This state controls the sign-out button disabled state in the dialog.
+        Users will not be able to abuse the sign-out button when performing the sign-out API call.
+    */
     const [isSigningOut, setIsSigningOut] = useState(false);
     const router = useRouter();
 
@@ -17,6 +21,7 @@ const Navbar = ({className, showSignOutButton}) => {
             method: "DELETE"
         });
         if (response.status === 200) {
+            // Redirect the user to the sign-in page.
             router.push("/signin");
         }
         else {
@@ -32,6 +37,7 @@ const Navbar = ({className, showSignOutButton}) => {
                         <img className="headerLogo" src="/img/todox-logo-white.svg" />
                     </Link>
                 </div>
+                {/*We don't want to show the sign-out button on the sign-in page.*/}
                 { showSignOutButton && <Button text="Sign out" onClick={signOut} size="medium" variant="primary" disabled={isSigningOut} /> }
             </div>
         </Header>

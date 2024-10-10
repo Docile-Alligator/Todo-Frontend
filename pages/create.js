@@ -47,6 +47,9 @@ const Create = () => {
                     <Alert message={todoState.alerts.success} onClose={() => dispatch(clearTodoAlerts())} variant="success" />
                     <Form onSubmit={handleSubmit}>
                         <InputField className="input" type="text" placeholder="Todo item name" required value={todoState.body.name} onChange={e => dispatch(updateTodoName({name: e.target.value}))} />
+                        {/*
+                            Add a show all todos button to redirect users to /todos page.
+                        */}
                         <div className="buttonsWrapper">
                             <Link href="/todos">
                                 <Button className="showTodosButton" text="Show all todos" size="large" variant="secondary" />
