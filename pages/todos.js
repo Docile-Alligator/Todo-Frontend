@@ -148,31 +148,13 @@ const Todos = () => {
         }
     };
 
-    // Load both lists when the page is rendering.
-    useEffect(() => {
-        fetchIncompleteTodos({});
-        fetchAllTodos({});
-    }, []);
-
-    /*
-        Clear the loading alert info for the previous tab when switch tabs.
-        Not clearing alert infos in both tabs at once is for user to see the initial loading info on a non-active tab
-     */
-    useEffect(() => {
-        if (activeTab === "incomplete") {
-            setAllLoadingInfo("");
-        } else {
-            setIncompleteLoadingInfo("");
-        }
-    }, [activeTab]);
-
     /*
         Return a promise when toggling the completeness so that the component itself can handle the rest.
         This is because we want to show the alert message on the item in the todo list itself.
      */
     const toggleTodoCompleteness = async (todoID, completed) => {
-        return apiFetch("/todo/toggleCompleted", {
-            method: "POST",
+        return apiFetch("/todo", {
+            method: "PUT",
             body: {
                 todoID: todoID,
                 completed: completed
@@ -195,8 +177,8 @@ const Todos = () => {
         // Clear the message because we are doing something right now.
         dispatch(clearModifyTodoAlerts());
 
-        const result = apiFetch("/todo/editName", {
-            method: "POST",
+        const result = apiFetch("/todo", {
+            method: "PUT",
             body: {
                 todoID: editTodoID,
                 newTodoName: editTodoName
@@ -233,6 +215,24 @@ const Todos = () => {
         });
     }
 
+    // Load both lists when the page is rendering.
+    useEffect(() => {
+        fetchIncompleteTodos({});
+        fetchAllTodos({});
+    }, []);
+
+    /*
+        Clear the loading alert info for the previous tab when switch tabs.
+        Not clearing alert infos in both tabs at once is for user to see the initial loading info on a non-active tab
+     */
+    useEffect(() => {
+        if (activeTab === "incomplete") {
+            setAllLoadingInfo("");
+        } else {
+            setIncompleteLoadingInfo("");
+        }
+    }, [activeTab]);
+
     return (
         <PageLayout title="Todos">
             <Container>
@@ -247,6 +247,7 @@ const Todos = () => {
                             setActiveTab("incomplete")
                         },
                         content: <div>
+                            {/*Notice here we pass the TodoListEntry to List*/}
                             <List
                                 className={"incompleteTodosList"}
                                 listEntry={(item) => <TodoListEntry item={item}
@@ -257,6 +258,7 @@ const Todos = () => {
                                 data={todoState.list.incomplete}
                             />
                             <Alert message={incompleteLoadingInfo} onClose={() => setIncompleteLoadingInfo("")} />
+                            {/*The three buttons for users to go to the next page, go to the previous page and refresh*/}
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })} />
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })} />
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})} />
@@ -267,6 +269,7 @@ const Todos = () => {
                             setActiveTab("all")
                         },
                         content: <div>
+                            {/*Notice here we pass the TodoListEntry to List*/}
                             <List
                                 className={"allTodosList"}
                                 data={todoState.list.all}
@@ -277,6 +280,7 @@ const Todos = () => {
                                 }
                             />
                             <Alert message={allLoadingInfo} onClose={() => setAllLoadingInfo("")} />
+                            {/*The three buttons for users to go to the next page, go to the previous page and refresh*/}
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })} />
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })} />
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})} />
@@ -285,6 +289,7 @@ const Todos = () => {
                 </div>
             </Container>
 
+            {/*Notice here we pass the InputField to Dialog*/}
             <Dialog ref={dialogRef}
                     message={todoState.alerts.error}
                     content={

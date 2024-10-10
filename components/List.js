@@ -1,6 +1,5 @@
-import React, {useRef} from "react";
+import React from "react";
 import styled from "styled-components";
-import {Colours} from "../definitions";
 
 
 /*

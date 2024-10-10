@@ -6,7 +6,7 @@ import Button from "./Button";
 
 /*
     This Dialog is made as generic as possible, so the content is actually passed in by the parent component.
-    In todos page, the content is a simple InputField.
+    In the todos page, the content is a simple InputField.
     The onClick listeners are also passed in by the parent component with the same reason behind.
  */
 const Dialog = forwardRef(({className, message, content, isConfirming, onConfirm, onClose, onClearAlertMessage}, ref) => {
