@@ -23,16 +23,22 @@ export const updateTodoNameError = ({error = ""}) => ({
     error
 });
 
-// TODO/CLEAR-UPDATE-NAME-ALERTS
-export const clearUpdateTodoNameALerts = () => ({
+// TODO/CLEAR-MODIFY-TODO-ALERTS
+export const clearModifyTodoAlerts = () => ({
     type: 'TODO/CLEAR-ALERTS'
 });
 
 // TODO/UPDATE-COMPLETENESS
-export const updateCompleted = ({todoID = "", completed = false}) => ({
+export const updateCompleteness = ({todoID = "", completed = false}) => ({
     type: 'TODO/UPDATE-COMPLETENESS',
     todoID,
     completed
+});
+
+// TODO/DELETE-TODO
+export const deleteTodo = ({todoID = ""}) => ({
+    type: 'TODO/DELETE-TODO',
+    todoID
 });
 
 // TODO/CLEAR

@@ -41,10 +41,6 @@ export default (state = defaultState, action) => {
                     all: state.list.all.map(todo => {
                         return todo.todoID === action.todoID ? { ...todo, name: action.name } : todo;
                     })
-                },
-                body: {
-                    ...state.body,
-                    name: action.name
                 }
             };
         case 'TODO/CLEAR-UPDATE-NAME-ALERTS':
@@ -107,6 +103,14 @@ export default (state = defaultState, action) => {
                     }
                 };
             }
+        case 'TODO/DELETE-TODO':
+            return {
+                ...state,
+                list: {
+                    incomplete: state.list.incomplete.filter(todo => todo.todoID !== action.todoID),
+                    all: state.list.all.filter(todo => todo.todoID !== action.todoID),
+                }
+            };
         case 'TODO/ERROR':
             return {
                 ...state,

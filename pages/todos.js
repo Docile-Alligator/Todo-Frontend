@@ -7,7 +7,7 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {
-    clearUpdateTodoNameALerts,
+    clearModifyTodoAlerts,
     setAllList,
     setIncompleteList,
     updateTodoName,
@@ -16,6 +16,7 @@ import {
 import Alert from "../components/Alert";
 import {useDispatch, useSelector} from "react-redux";
 import TodoListEntry from "../components/TodoListEntry";
+import todo from "../reducers/todo";
 
 
 const Todos = () => {
@@ -116,7 +117,7 @@ const Todos = () => {
         } else {
             setIncompleteLoadingInfo("");
         }
-    }, [activeTab])
+    }, [activeTab]);
 
     const toggleTodoCompleteness = async (todoID, completed) => {
         return apiFetch("/todo/toggleCompleted", {
@@ -139,7 +140,7 @@ const Todos = () => {
 
     const onConfirmEditTodo = async () => {
         setIsConfirmingEditingName(true);
-        dispatch(clearUpdateTodoNameALerts());
+        dispatch(clearModifyTodoAlerts());
 
         const result = apiFetch("/todo/editName", {
             method: "POST",
@@ -165,6 +166,15 @@ const Todos = () => {
         });
     }
 
+    const deleteTodo = async (todoID) => {
+        return apiFetch("/todo/delete", {
+            method: "DELETE",
+            body: {
+                todoID: todoID
+            }
+        });
+    }
+
     return (
         <PageLayout title="Todos">
             <Container>
@@ -179,14 +189,15 @@ const Todos = () => {
                                 className={"incompleteTodosList"}
                                 listEntry={(item) => <TodoListEntry item={item}
                                                                     toggleOnClick={toggleTodoCompleteness}
-                                                                    editOnClick={showEditTodoDialog}/>
+                                                                    editOnClick={showEditTodoDialog}
+                                                                    deleteOnClick={deleteTodo} />
                                 }
                                 data={todoState.list.incomplete}
                             />
                             <Alert message={incompleteLoadingInfo} onClose={() => setIncompleteLoadingInfo("")} />
-                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })}/>
-                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })}/>
-                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})}/>
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })} />
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })} />
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})} />
                         </div>
                     }, {
                         title: "all",
@@ -199,13 +210,14 @@ const Todos = () => {
                                 data={todoState.list.all}
                                 listEntry={(item) => <TodoListEntry item={item}
                                                                     toggleOnClick={toggleTodoCompleteness}
-                                                                    editOnClick={showEditTodoDialog}/>
+                                                                    editOnClick={showEditTodoDialog}
+                                                                    deleteOnClick={deleteTodo} />
                                 }
                             />
                             <Alert message={allLoadingInfo} onClose={() => setAllLoadingInfo("")} />
-                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })}/>
-                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })}/>
-                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})}/>
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })} />
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })} />
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})} />
                         </div>
                     }]} activeTab={activeTab}/>
                 </div>
@@ -221,18 +233,18 @@ const Todos = () => {
                             value={editTodoName}
                             onChange={e => {
                                 setEditTodoName(e.target.value);
-                                dispatch(clearUpdateTodoNameALerts());
+                                dispatch(clearModifyTodoAlerts());
                             }}/>
                     }
                     isConfirming={isConfirmingEditingName}
                     onClose={() => {
-                        dispatch(clearUpdateTodoNameALerts());
+                        dispatch(clearModifyTodoAlerts());
                         if (dialogRef.current) {
                             dialogRef.current.close();
                         }
                     }}
                     onConfirm={onConfirmEditTodo}
-                    onClearAlertMessage={() => dispatch(clearUpdateTodoNameALerts())}
+                    onClearAlertMessage={() => dispatch(clearModifyTodoAlerts())}
             />
         </PageLayout>
     );

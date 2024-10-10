@@ -1,11 +1,10 @@
 import React, {useState} from "react";
 import styled from "styled-components";
-import {Colours, Typography} from "../definitions";
-import {useDispatch, useSelector} from "react-redux";
-import {clearListLoadingInfo, updateCompleted} from "../actions/todo";
+import {useDispatch} from "react-redux";
+import {deleteTodo, updateCompleteness} from "../actions/todo";
 import Alert from "./Alert";
 
-const TodoListEntry = ({className, item, toggleOnClick, editOnClick}) => {
+const TodoListEntry = ({className, item, toggleOnClick, editOnClick, deleteOnClick}) => {
     const [alertInfo, setAlertInfo] = useState("");
     const dispatch = useDispatch();
 
@@ -19,23 +18,40 @@ const TodoListEntry = ({className, item, toggleOnClick, editOnClick}) => {
                 </div>
                 <div className="listToggleItemControls">
                     <img className="listToggleItemToggle"
-                         onClick={() => toggleOnClick(item.todoID, !item.completed)
+                         onClick={() => {
+                             setAlertInfo("");
+
+                             toggleOnClick(item.todoID, !item.completed)
                              .then((result) => {
                                  if (result.status === 200) {
-                                     dispatch(updateCompleted({ todoID: item.todoID, completed: !item.completed }));
+                                     dispatch(updateCompleteness({todoID: item.todoID, completed: !item.completed}));
                                  } else {
                                      setAlertInfo(result.error);
-                                 }})
-                             .catch((error) => {setAlertInfo(error.message)})
-                         } src={item.completed ? "/img/checked.png" : "/img/unchecked.png"}/>
+                                 }
+                             })
+                             .catch((error) => {
+                                 setAlertInfo(error.message)
+                             });
+                         }} src={item.completed ? "/img/checked.png" : "/img/unchecked.png"} />
                     <img className="listToggleItemEdit"
                          onClick={() => {
                              editOnClick(item.todoID, item.name);
-                         }} src="/img/edit.png"/>
+                         }} src="/img/edit.png" />
                     <img className="listToggleItemDelete"
                          onClick={() => {
-                             editOnClick(item.todoID, item.name);
-                         }} src="/img/delete.png"/>
+                             setAlertInfo("");
+
+                             deleteOnClick(item.todoID)
+                                 .then((result) => {
+                                     if (result.status === 200) {
+                                         dispatch(deleteTodo({todoID: item.todoID}));
+                                     } else {
+                                         setAlertInfo(result.error);
+                                     }
+                                 }).catch((error) => {
+                                 setAlertInfo(error.message)
+                             });
+                         }} src="/img/delete.png" />
                 </div>
             </div>
         </Container>
