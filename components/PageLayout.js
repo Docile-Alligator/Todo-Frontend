@@ -5,7 +5,7 @@ import { Colours } from '../definitions';
 import Navbar from './Navbar';
 
 
-const PageLayout = ({className, title, children}) => {
+const PageLayout = ({className, title, showSignOutButton = true, children}) => {
     return (
         <Container className={className}>
             <Head>
@@ -13,7 +13,7 @@ const PageLayout = ({className, title, children}) => {
                 <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" /> 
             </Head>
-            <Navbar />
+            <Navbar showSignOutButton={showSignOutButton} />
             <div className="contentContainer">
                 {children}
             </div>

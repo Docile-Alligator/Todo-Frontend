@@ -46,7 +46,7 @@ const SignIn = () => {
     };
 
     return (
-        <PageLayout title="Sign in">
+        <PageLayout title="Sign in" showSignOutButton={false}>
             <Container>
                 <div className="content">
                     <h1>Sign In</h1>

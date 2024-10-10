@@ -1,16 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import { Colours } from '../definitions';
 import Link from 'next/link';
 import Button from "./Button";
-import {useSelector} from "react-redux";
+import apiFetch from "../functions/apiFetch";
+import {useRouter} from "next/router";
 
 
-const Navbar = ({className}) => {
-    const signInState = useSelector((state) => state.signIn);
+const Navbar = ({className, showSignOutButton}) => {
+    const [isSigningOut, setIsSigningOut] = useState(false);
+    const router = useRouter();
 
-    const signOut = () => {
-
+    const signOut = async () => {
+        setIsSigningOut(true);
+        let response = await apiFetch("/user/session", {
+            method: "DELETE"
+        });
+        if (response.status === 200) {
+            router.push("/signin");
+        }
+        else {
+            setIsSigningOut(false);
+        }
     }
 
     return (
@@ -19,7 +30,7 @@ const Navbar = ({className}) => {
                 <Link href="/" className="headerLogoWrapper">
                     <img className="headerLogo" src="/img/todox-logo-white.svg" />
                 </Link>
-                <Button text="Sign out" onClick={signOut} size="medium" variant="primary" disabled={signInState.body.username !== ""} />
+                { showSignOutButton && <Button text="Sign out" onClick={signOut} size="medium" variant="primary" disabled={isSigningOut} /> }
             </div>
         </Header>
     );
@@ -28,12 +39,10 @@ const Navbar = ({className}) => {
 export default Navbar;
 
 const Header = styled.header`
-    align-items: center;
     background: ${Colours.NAVIGATION_BAR};
     box-sizing: border-box;
-    //display: flex;
     height: 4rem;
-    //padding: 1rem 2.25rem;
+    padding: 1rem 2.25rem;
     position: fixed;
     top: 0;
     width: 100%;
@@ -41,19 +50,19 @@ const Header = styled.header`
 
     .headerContents {
         display: flex;
+        align-items: center;
+        height: 100%;
     }
     
     .headerLogoWrapper {
         flex-grow: 1;
-        vertical-align: top;
-        float: right;
+        vertical-align: middle;
+        display: inline-block;
     }
 
     Button {
-        vertical-align: top;
-        border: 1px solid red;
+        vertical-align: middle;
         float: right;
-        //display: block;
     }
     
     .headerLogo {
