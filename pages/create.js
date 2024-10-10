@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Colours, Typography } from '../definitions';
 import Button from '../components/Button';
 import PageLayout from '../components/PageLayout';
-import { clearTodoAlerts, clearTodoBody, updateTodoError, updateTodoName, updateTodoSuccess } from '../actions/todo';
+import {
+    clearTodo,
+    clearTodoAlerts,
+    clearTodoBody,
+    updateTodoError,
+    updateTodoName,
+    updateTodoSuccess
+} from '../actions/todo';
 import Form from '../components/Form';
 import InputField from '../components/InputField';
 import apiFetch from '../functions/apiFetch';
@@ -37,6 +44,11 @@ const Create = () => {
             }
         }
     };
+
+    // Clear the todoState when we arrive /create since we are sharing the same state between /todos and /create.
+    useEffect(() => {
+        dispatch(clearTodo());
+    }, []);
 
     return (
         <PageLayout title="Create todo">

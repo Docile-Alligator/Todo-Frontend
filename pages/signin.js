@@ -36,7 +36,7 @@ const SignIn = () => {
                 dispatch(updateSignInSuccess({ success: "Sign in successful, redirecting..." }));
                 
                 const redirectUrl = searchParams.get('redirect');
-                router.push(redirectUrl === undefined ? "/" : redirectUrl);
+                router.push(redirectUrl === null || redirectUrl === undefined ? "/" : redirectUrl);
             }
             else {
                 dispatch(updateSignInError({ error: response.body.error }));

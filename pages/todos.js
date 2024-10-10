@@ -7,7 +7,7 @@ import apiFetch from "../functions/apiFetch";
 import Dialog from "../components/Dialog";
 import InputField from "../components/InputField";
 import {
-    clearModifyTodoAlerts,
+    clearModifyTodoAlerts, clearTodo,
     setAllList,
     setIncompleteList,
     updateTodoName,
