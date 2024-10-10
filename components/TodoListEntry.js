@@ -41,30 +41,6 @@ const TodoListEntry = ({className, item, toggleOnClick, editOnClick}) => {
 export default TodoListEntry;
 
 const Container = styled.li`
-    ${(props) => {
-        if (props.variant === "error") {
-            return `
-                    background-color: ${Colours.ERROR_LIGHTEST_2};
-                    color: ${Colours.ERROR_NEON};
-
-                    a {
-                        color: ${Colours.ERROR_NEON};
-                        text-decoration: underline;
-                    }
-                `;
-        } else if (props.variant === "success") {
-            return `
-                    background-color: ${Colours.SUCCESS_LIGHTER};
-                    color: ${Colours.SUCCESS_DARK};
-                `;
-    } else if (props.variant === "info") {
-        return `
-                    background-color: ${Colours.ACCENT_3_LIGHTER};
-                    color: ${Colours.ACCENT_3_DARK};
-                `;
-    }
-}
-}
     .listToggleItemContentWrapper {
         display: flex;
         line-height: 32px;
