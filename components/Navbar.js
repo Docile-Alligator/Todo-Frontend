@@ -56,12 +56,10 @@ const Header = styled.header`
     
     .headerLogoWrapper {
         flex-grow: 1;
-        vertical-align: middle;
         display: inline-block;
     }
 
     Button {
-        vertical-align: middle;
         float: right;
     }
     

@@ -32,6 +32,10 @@ const TodoListEntry = ({className, item, toggleOnClick, editOnClick}) => {
                          onClick={() => {
                              editOnClick(item.todoID, item.name);
                          }} src="/img/edit.png"/>
+                    <img className="listToggleItemDelete"
+                         onClick={() => {
+                             editOnClick(item.todoID, item.name);
+                         }} src="/img/delete.png"/>
                 </div>
             </div>
         </Container>
@@ -44,10 +48,10 @@ const Container = styled.li`
     .listToggleItemContentWrapper {
         display: flex;
         line-height: 32px;
+        align-items: center;
     }
     
     .listToggleItemContent {
-        vertical-align: middle;
         flex-grow: 1;
     }
 
@@ -56,12 +60,10 @@ const Container = styled.li`
     }
     
     .listToggleItemControls {
-        vertical-align: top;
         float: right;
     }
     
     .listToggleItemControls img {
-        vertical-align: top;
         display: block;
         width: 2rem;
     }
