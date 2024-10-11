@@ -27,19 +27,24 @@ const SignIn = () => {
         if (signInState.body.username && signInState.body.password) {
             setIsSigningIn(true);
             dispatch(clearSignInAlerts());
-            let response = await apiFetch("/user/session", {
-                body: signInState.body, 
-                method: "POST"
-            });
-            if (response.status === 200) {
-                dispatch(clearSignIn());
-                dispatch(updateSignInSuccess({ success: "Sign in successful, redirecting..." }));
-                
-                const redirectUrl = searchParams.get('redirect');
-                router.push(redirectUrl === null || redirectUrl === undefined ? "/" : redirectUrl);
-            }
-            else {
-                dispatch(updateSignInError({ error: response.body.error }));
+            try {
+                let response = await apiFetch("/user/session", {
+                    body: signInState.body,
+                    method: "POST"
+                });
+                if (response.status === 200) {
+                    dispatch(clearSignIn());
+                    dispatch(updateSignInSuccess({ success: "Sign in successful, redirecting..." }));
+
+                    const redirectUrl = searchParams.get('redirect');
+                    router.push(redirectUrl === null || redirectUrl === undefined ? "/" : redirectUrl);
+                }
+                else {
+                    dispatch(updateSignInError({ error: response.body.error }));
+                }
+            } catch (error) {
+                dispatch(updateSignInError({ error: error.message }));
+            } finally {
                 setIsSigningIn(false);
             }
         }

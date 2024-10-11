@@ -33,23 +33,29 @@ const SignUp = () => {
         else {
             setIsSigningUp(true);
             dispatch(clearSignUpAlerts());
-            let response = await apiFetch("/user", {
-                body: {
-                    ...signUpState.body
-                }, 
-                method: "POST",
-                includeCredentials: false
-            });
-            
-            if (response.status === 201) {
-                dispatch(clearSignUp());
-                dispatch(updateSignUpSuccess({ sucess: "Account creation successful, redirecting..." }));
 
-                router.replace("/");
-            }
-            else {
+            try {
+                let response = await apiFetch("/user", {
+                    body: {
+                        ...signUpState.body
+                    },
+                    method: "POST",
+                    includeCredentials: false
+                });
+
+                if (response.status === 201) {
+                    dispatch(clearSignUp());
+                    dispatch(updateSignUpSuccess({ sucess: "Account creation successful, redirecting..." }));
+
+                    router.replace("/");
+                }
+                else {
+                    dispatch(updateSignUpError({ error: response.body.error }));
+                }
+            } catch (error) {
+                dispatch(updateSignUpError({ error: error.message }));
+            } finally {
                 setIsSigningUp(false);
-                dispatch(updateSignUpError({ error: response.body.error }));
             }
         }
     };

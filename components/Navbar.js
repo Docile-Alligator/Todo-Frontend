@@ -17,17 +17,22 @@ const Navbar = ({className, showSignOutButton}) => {
 
     const signOut = async () => {
         setIsSigningOut(true);
-        let response = await apiFetch("/user/session", {
-            method: "DELETE"
-        });
+        try {
+            let response = await apiFetch("/user/session", {
+                method: "DELETE"
+            });
 
-        if (response.status === 200) {
-            // Redirect the user to the sign-in page.
-            router.push("/signin");
-        } else {
-            console.error("Log out failed");
+            if (response.status === 200) {
+                // Redirect the user to the sign-in page.
+                router.push("/signin");
+            } else {
+                console.error("Log out failed");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSigningOut(false);
         }
-        setIsSigningOut(false);
     }
 
     return (
