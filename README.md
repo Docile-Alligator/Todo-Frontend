@@ -18,7 +18,7 @@ New code is written in:
 
 etc.
 
-All of the requirments are met and here are some extra features.
+All requirments are met and here are some extra features.
 1. Pagination (the page size is set to 3 to easily see the effect).
 2. Update the same todo in both `incomplete` and `all` todo lists when they are being modified.
 3. Showing loading info if something happens.
