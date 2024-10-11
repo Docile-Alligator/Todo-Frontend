@@ -23,9 +23,10 @@ All requirments are met and here are some extra features.
 2. Update the same todo in both `incomplete` and `all` todo lists when they are being modified.
 3. Showing loading info if something happens.
 4. Delete todo.
-5. Redirect to the previous page after signing in (if available).
-6. Sign out.
-7. Add buttons to redirect from /todos to /create and vice versa.
-8. Handle some exceptions of the Promise in the existing code base.
+5. Fix creating duplicate users.
+6. Redirect to the previous page after signing in (if available).
+7. Sign out.
+8. Add buttons to redirect from /todos to /create and vice versa.
+9. Handle some exceptions of the Promise in the existing code base.
 
 Some of the old code are optimized. Change `href="/pages/todos"` to `href="/todos"` since the former is a wrong redirect url.
