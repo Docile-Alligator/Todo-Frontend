@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -60,8 +60,12 @@ const SignUp = () => {
         }
     };
 
+    useEffect(() => {
+        dispatch(clearSignUp());
+    }, []);
+
     return (
-        <PageLayout title="Sign up">
+        <PageLayout title="Sign up" showSignOutButton={false}>
             <Container>
                 <div className="content">
                     <h1>Sign up</h1>
