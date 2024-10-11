@@ -204,6 +204,11 @@ const Todos = () => {
         });
     }
 
+    // Clear the todoState when we arrive /create since we are sharing the same state between /todos and /create.
+    useEffect(() => {
+        dispatch(clearTodo());
+    }, []);
+
     // Load both lists when the page is rendering.
     useEffect(() => {
         fetchTodos({ fetchIncomplete: true });
