@@ -20,13 +20,14 @@ const Navbar = ({className, showSignOutButton}) => {
         let response = await apiFetch("/user/session", {
             method: "DELETE"
         });
+
         if (response.status === 200) {
             // Redirect the user to the sign-in page.
             router.push("/signin");
+        } else {
+            console.error("Log out failed");
         }
-        else {
-            setIsSigningOut(false);
-        }
+        setIsSigningOut(false);
     }
 
     return (

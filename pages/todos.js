@@ -70,57 +70,29 @@ const Todos = () => {
     /*
         The function for fetching the incomplete todo list.
         It will show an alert message when something bad happens.
+        We combine fetch both incomplete and all todos into this single fetchTodos function since they are pretty similar.
+        Right now we use the boolean variable fetchIncomplete to distinguish between two types of todos, but in the future,
+        if we decide to fetch some other kinds of todos, we should change it to another data type, such as an int.
+        Using boolean right now is for the simplicity.
+        Or if in the future loading different kinds of todos requires different strategy, we should separate each fetching function.
+        See commits before to see the original implementation of fetchIncompleteTodos and fetchAllTodos functions.
      */
-    const fetchIncompleteTodos = async ({before = undefined, after = undefined}) => {
-        setIncompleteLoadingInfo("");
-        setIncompleteLoading(true);
-
-        // Set the query params here so that it's easier to read and manage.
-        const params = new URLSearchParams({
-            before: before,
-            after: after,
-            pageSize: incompletePageSize,
-            findIncomplete: true
-        });
-
-        try {
-            const response = await apiFetch(`/todo?${params.toString()}`, {
-                method: "GET"
-            });
-            const result = response.body;
-            if (result.result.length === 0) {
-                // Notice we don't update the before and after anchor here since there is no more todo item available to fetch.
-                setIncompleteLoadingInfo("No data.");
-            } else {
-                /*
-                    We dispatch a new state even if we don't need to update the all todo list since we have to make sure
-                    the same item should be updated in both lists after modification.
-                 */
-                dispatch(setIncompleteList({ incomplete: result.result }));
-                setIncompleteAnchor([result.before, result.after]);
-            }
-        } catch (error) {
-            console.error(error);
-            setIncompleteLoadingInfo("Server error.");
-        } finally {
-            // Now we finished loading the incomplete todo list.
-            setIncompleteLoading(false);
+    const fetchTodos = async ({fetchIncomplete = false, before = undefined, after = undefined}) => {
+        if (fetchIncomplete) {
+            setIncompleteLoadingInfo("");
+            setIncompleteLoading(true);
+        } else {
+            setAllLoadingInfo("");
+            setAllLoading(true);
         }
-    };
-
-    /*
-        The function for fetching the incomplete todo list.
-        It will show an alert message when something bad happens.
-     */
-    const fetchAllTodos = async ({before = undefined, after = undefined}) => {
-        setAllLoadingInfo("");
-        setAllLoading(true);
 
         // Set the query params here so that it's easier to read and manage.
         const params = new URLSearchParams({
             before: before,
             after: after,
-            pageSize: allPageSize
+            pageSize: fetchIncomplete ? incompletePageSize : allPageSize,
+            // Notice we are using findIncomplete query param because it's actually a find operation in mongoDB
+            findIncomplete: fetchIncomplete
         });
 
         try {
@@ -129,22 +101,39 @@ const Todos = () => {
             });
             const result = response.body;
             if (result.result.length === 0) {
-                // Notice we don't update the before and after anchor here since there is no more todo item available to fetch.
-                setAllLoadingInfo("No data.");
+                // Notice we don't update the before and after anchors here since there is no more todo item available to fetch.
+                if (fetchIncomplete) {
+                    setIncompleteLoadingInfo("No data.");
+                } else {
+                    setAllLoadingInfo("No data.");
+                }
             } else {
                 /*
-                    We dispatch a new state even if we don't need to update the incomplete todo list since we have to make sure
+                    We dispatch a new state even if we don't need to update the todo list since we have to make sure
                     the same item should be updated in both lists after modification.
                  */
-                dispatch(setAllList({ all: result.result }));
-                setAllAnchor([result.before, result.after]);
+                if (fetchIncomplete) {
+                    dispatch(setIncompleteList({ incomplete: result.result }));
+                    setIncompleteAnchor([result.before, result.after]);
+                } else {
+                    dispatch(setAllList({ all: result.result }));
+                    setAllAnchor([result.before, result.after]);
+                }
             }
         } catch (error) {
             console.error(error);
-            setIncompleteLoadingInfo("Server error.");
+            if (fetchIncomplete) {
+                setIncompleteLoadingInfo("Server error.");
+            } else {
+                setAllLoadingInfo("Server error.");
+            }
         } finally {
-            // Now we finished loading the all todo list.
-            setAllLoading(false);
+            // Now we finished loading the todo list.
+            if (fetchIncomplete) {
+                setIncompleteLoading(false);
+            } else {
+                setAllLoading(false);
+            }
         }
     };
 
@@ -217,8 +206,8 @@ const Todos = () => {
 
     // Load both lists when the page is rendering.
     useEffect(() => {
-        fetchIncompleteTodos({});
-        fetchAllTodos({});
+        fetchTodos({ fetchIncomplete: true });
+        fetchTodos({});
     }, []);
 
     /*
@@ -259,9 +248,9 @@ const Todos = () => {
                             />
                             <Alert message={incompleteLoadingInfo} onClose={() => setIncompleteLoadingInfo("")} />
                             {/*The three buttons for users to go to the next page, go to the previous page and refresh. Refresh will load page 1's todos.*/}
-                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })} />
-                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })} />
-                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})} />
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchTodos({ fetchIncomplete: true, before: incompleteAnchor[0] })} />
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchTodos({ fetchIncomplete: true, after: incompleteAnchor[1] })} />
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchTodos({ fetchIncomplete: true })} />
                         </div>
                     }, {
                         title: "all",
@@ -281,9 +270,9 @@ const Todos = () => {
                             />
                             <Alert message={allLoadingInfo} onClose={() => setAllLoadingInfo("")} />
                             {/*The three buttons for users to go to the next page, go to the previous page and refresh. Refresh will load page 1's todos.*/}
-                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })} />
-                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })} />
-                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})} />
+                            <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchTodos({ before: allAnchor[0] })} />
+                            <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchTodos({ after: allAnchor[1] })} />
+                            <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchTodos({})} />
                         </div>
                     }]} activeTab={activeTab} />
                 </div>
