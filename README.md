@@ -1,6 +1,6 @@
 New code matches the style of the existing code base.
 
-Separation of concern and decoupling of components are considered.
+Separation of concern and decoupling of components are prioritized.
 
 Extensive comments of the new code are available to explain the design choices and details of the implementation. Some future improvements are also noted.
 
