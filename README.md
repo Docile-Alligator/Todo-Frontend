@@ -4,7 +4,7 @@ Separation of concern and decoupling of components are considered.
 
 Extensive comments of the new code are available to explain the design choices and details of the implementation. Some future improvements are also noted.
 
-New code are written in:
+New code is written in:
 1. https://github.com/Docile-Alligator/Todo-Frontend/blob/master/pages/todos.js
 2. https://github.com/Docile-Alligator/Todo-Frontend/blob/master/pages/signin.js
 3. https://github.com/Docile-Alligator/Todo-Frontend/blob/master/pages/signup.js
