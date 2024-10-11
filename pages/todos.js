@@ -154,7 +154,7 @@ const Todos = () => {
      */
     const toggleTodoCompleteness = async (todoID, completed) => {
         return apiFetch("/todo", {
-            method: "PUT",
+            method: "PATCH",
             body: {
                 todoID: todoID,
                 completed: completed
@@ -178,7 +178,7 @@ const Todos = () => {
         dispatch(clearModifyTodoAlerts());
 
         const result = apiFetch("/todo", {
-            method: "PUT",
+            method: "PATCH",
             body: {
                 todoID: editTodoID,
                 newTodoName: editTodoName
@@ -258,7 +258,7 @@ const Todos = () => {
                                 data={todoState.list.incomplete}
                             />
                             <Alert message={incompleteLoadingInfo} onClose={() => setIncompleteLoadingInfo("")} />
-                            {/*The three buttons for users to go to the next page, go to the previous page and refresh*/}
+                            {/*The three buttons for users to go to the next page, go to the previous page and refresh. Refresh will load page 1's todos.*/}
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchIncompleteTodos({ before: incompleteAnchor[0] })} />
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchIncompleteTodos({ after: incompleteAnchor[1] })} />
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchIncompleteTodos({})} />
@@ -280,7 +280,7 @@ const Todos = () => {
                                 }
                             />
                             <Alert message={allLoadingInfo} onClose={() => setAllLoadingInfo("")} />
-                            {/*The three buttons for users to go to the next page, go to the previous page and refresh*/}
+                            {/*The three buttons for users to go to the next page, go to the previous page and refresh. Refresh will load page 1's todos.*/}
                             <img className={"pageIcon"} src="/img/previous-page.png" onClick={() => fetchAllTodos({ before: allAnchor[0] })} />
                             <img className={"pageIcon"} src="/img/next-page.png" onClick={() => fetchAllTodos({ after: allAnchor[1] })} />
                             <img className={"pageIcon"} src="/img/refresh.png" onClick={() => fetchAllTodos({})} />
